@@ -4,7 +4,7 @@ import './index.css'
 class Tile extends Component {
   render() {
     const { value, id } = this.props
-    const className = 'square'
+    const className = 'tile'
     return (
       <button {...{ className, id }}>
         {value}
