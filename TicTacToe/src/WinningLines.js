@@ -1,4 +1,4 @@
-export const winningLines3 = [
+const winningLines3 = [
   [0, 1, 2],
   [3, 4, 5],
   [6, 7, 8],
@@ -9,7 +9,7 @@ export const winningLines3 = [
   [2, 4, 6]
 ]
 
-export const winningLines4 = [
+const winningLines4 = [
   [0, 1, 2, 3],
   [4, 5, 6, 7],
   [8, 9, 10, 11],
@@ -22,7 +22,7 @@ export const winningLines4 = [
   [3, 6, 9, 12]
 ]
 
-export const winningLines5 = [
+const winningLines5 = [
   [0, 1, 2, 3, 4],
   [5, 6, 7, 8, 9],
   [10, 11, 12, 13, 14],
@@ -36,3 +36,14 @@ export const winningLines5 = [
   [0, 6, 12, 18, 24],
   [4, 8, 12, 16, 20]
 ]
+
+const getWinningLines = (boardSize) => {
+  switch (boardSize) {
+    case 3: return winningLines3
+    case 4: return winningLines4
+    case 5: return winningLines5
+    default: return []
+  }
+}
+
+export default getWinningLines

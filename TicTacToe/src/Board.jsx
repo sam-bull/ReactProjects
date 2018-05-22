@@ -2,66 +2,47 @@ import React, { Component } from 'react';
 import './index.css'
 import ResetButton from './ResetButton'
 import Row from './Row'
-import { winningLines3, winningLines4, winningLines5 } from './WinningLines'
+import getWinningLines from './WinningLines'
 
+const defaultState = (size) => ({
+  boardSize: size,
+  tiles: Array(size * size).fill(null),
+  xIsNext: true,
+  status: 'Next player: X',
+  winner: undefined,
+})
 class Board extends Component {
   constructor(props) {
     super(props)
-    const size = this.props.boardSize
-    this.state = {
-      boardSize: size,
-      tiles: Array(size * size).fill(null),
-      xIsNext: true,
-      status: 'Next player: X',
-      winner: false,
-    }
+    this.state = defaultState(this.props.boardSize)
   }
 
   reset = () => {
-    const size = this.props.boardSize
-    this.setState(({
-      tiles: Array(size * size).fill(null),
-      xIsNext: true,
-      status: 'Next player: X',
-      winner: false
-    }))
+    this.setState(defaultState(this.props.boardSize))
   }
 
   calculateWinner = (boardSize, tiles) => {
-    const winningLines = boardSize === 3 ?
-      winningLines3 :
-      boardSize === 4 ?
-        winningLines4 :
-        winningLines5
-
-    const conainsWin = winningLines.map(
+    const winningLines = getWinningLines(boardSize)
+    const possibleWinners = winningLines.map(
       line => {
-        if (!tiles[line[0]]) return false
-        const restOfLine = line.slice(1)
-        const lineHasMismatch = restOfLine.some(tile => {
-          return tiles[line[0]] !== tiles[tile]
+        const firstTile = tiles[line[0]]
+        if (!firstTile) return false
+        const lineHasWin = line.slice(1).every(tile => {
+          return firstTile === tiles[tile]
         })
-        return !lineHasMismatch
+        return lineHasWin ? firstTile : false
       })
-    const result = conainsWin.indexOf(true)
-    if (result >= 0) {
-      return tiles[winningLines[result][0]]
-    }
-    return false
+    return possibleWinners.find(winner => winner)
   }
 
   getStatus = (tiles, xIsNext, winner) => {
-    let status
     if (winner) {
-      status = `The winner is ${winner}!`
+      return `The winner is ${winner}!`
     }
-    else {
-      const gameOver = !(tiles.some(tile => tile == null))
-      status = gameOver ?
-        'Game over, no winner' :
-        `Next player: ${xIsNext ? 'X' : 'O'}`
-    }
-    return status
+    const gameOver = !(tiles.some(tile => tile == null))
+    return gameOver ?
+      'Game over, no winner' :
+      `Next player: ${xIsNext ? 'X' : 'O'}`
   }
 
   onClick = (event) => {
@@ -70,6 +51,7 @@ class Board extends Component {
     if (!tiles[id] && !winner) {
       const newTiles = tiles.slice()
       newTiles[id] = xIsNext ? 'X' : 'O'
+      
       const winner = this.calculateWinner(boardSize, newTiles)
       const status = this.getStatus(newTiles, !xIsNext, winner)
       this.setState(oldState => ({
@@ -84,15 +66,17 @@ class Board extends Component {
   render() {
     const { tiles, status, boardSize } = this.state;
     return (
-      <div className="game-board" onClick={this.onClick}>
+      <div>
         <div>{status}</div>
-        <Row id={0} tiles={tiles} size={boardSize} />
-        <Row id={1} tiles={tiles} size={boardSize} />
-        <Row id={2} tiles={tiles} size={boardSize} />
-        {boardSize > 3 &&
-          <Row id={3} tiles={tiles} size={boardSize} />}
-        {boardSize > 4 &&
-          <Row id={4} tiles={tiles} size={boardSize} />}
+        <div className="game-board" onClick={this.onClick}>
+          <Row id={0} tiles={tiles} size={boardSize} />
+          <Row id={1} tiles={tiles} size={boardSize} />
+          <Row id={2} tiles={tiles} size={boardSize} />
+          {boardSize > 3 &&
+            <Row id={3} tiles={tiles} size={boardSize} />}
+          {boardSize > 4 &&
+            <Row id={4} tiles={tiles} size={boardSize} />}
+        </div>
         <div>
           <ResetButton reset={this.reset} />
         </div>
