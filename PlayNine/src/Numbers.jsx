@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 const range = [1,2,3,4,5,6,7,8,9]
 
@@ -11,11 +11,18 @@ const Numbers = (props) => {
       return 'selected'
     }
   }
+
+  const selectNumber = (clickedNumber) => {
+    const selectedNumbers = props.selectedNumbers
+    if (selectedNumbers.indexOf(clickedNumber) >= 0) { return }
+    props.updateSelectedNumbers(selectedNumbers.concat(clickedNumber))
+  }
+
 	return (
   	<div className="card text-center">
     	<div>
       	{range.map((number, i) =>
-        	<span key={i} className={numberClassName(number)} onClick={() => props.selectNumber(number)}>
+        	<span key={i} className={numberClassName(number)} onClick={() => selectNumber(number)}>
           	{number}
           </span>
         )}
@@ -24,4 +31,4 @@ const Numbers = (props) => {
   )
 }
 
-export { range, Numbers }
+export default Numbers

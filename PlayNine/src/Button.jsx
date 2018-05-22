@@ -1,37 +1,41 @@
-import React from 'react';
+import React from 'react'
+
+// too much logic here
+// put state in game
+// use onclick in game
 
 const Button = (props) => {
-	let button
-  switch(props.answerIsCorrect) {
-  	case true:
-    	button =
-      <button className="btn btn-success" onClick={props.acceptAnswer}>
-      	<i className="fa fa-check"></i>
-      </button>
+  let className = 'btn'
+  let onClick = props.checkAnswer
+  let disabled = false
+  let buttonSymbol
+
+  switch (props.answerIsCorrect) {
+    case true:
+      className = "btn btn-success"
+      onClick = props.acceptAnswer
+      buttonSymbol = <i className="fa fa-check"></i>
       break
     case false:
-    	button =
-      <button className="btn btn-danger" onClick={props.tryAgain}>
-      	<i className="fa fa-times"></i>
-      </button>
+      className = "btn btn-danger"
+      onClick = () => { props.updateSelectedNumbers([]) }
+      buttonSymbol = <i className="fa fa-times"></i>
       break
-    default: 
-    	button =
-      <button className="btn" 
-      onClick={props.checkAnswer}
-      disabled={props.selectedNumbers.length === 0}>
-      	=
-      </button>
+    default:
+      buttonSymbol = '='
+      disabled = props.selectedNumbers.length === 0
       break
   }
-	return (
-  	<div className="col-2 text-center">
-    	{button}
+  return (
+    <div className="col-2 text-center">
+      <button {...{ className, onClick, disabled }}>
+        {buttonSymbol}
+      </button>
       <br /><br />
-      <button className="btn btn-warning btn-sm" 
-      onClick={props.redraw}
-      disabled={props.numberOfRedraws <= 0}>
-      	{props.numberOfRedraws}
+      <button className="btn btn-warning btn-sm"
+        onClick={props.redraw}
+        disabled={props.numberOfRedraws <= 0}>
+        {props.numberOfRedraws}
       </button>
     </div>
   )

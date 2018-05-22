@@ -1,149 +1,131 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import './App.css';
-import './../node_modules/bootstrap/dist/css/bootstrap.min.css';
-import './../node_modules/bootstrap/dist/js/bootstrap.min.js';
-import './../node_modules/font-awesome/css/font-awesome.css';
+import './../node_modules/bootstrap/dist/css/bootstrap.min.css'
+import './../node_modules/bootstrap/dist/js/bootstrap.min.js'
+import './../node_modules/font-awesome/css/font-awesome.css'
 import Stars from './Stars'
 import Button from './Button'
 import Answer from './Answer'
-import { range, Numbers } from './Numbers'
+import Numbers from './Numbers'
 import DoneFrame from './DoneFrame'
 
-const rangeSize = range.length
+const numberOfNumbers = 9
+
+const defaultState = (randomNumber) => ({
+  selectedNumbers: [],
+  numberOfStars: randomNumber,
+  answerIsCorrect: null,
+  usedNumbers: [],
+  numberOfRedraws: 5,
+  doneStatus: ''
+})
+
+const randomNumber = () => Math.ceil(Math.random() * numberOfNumbers)
 
 class Game extends Component {
-	static randomNumber = () => Math.ceil(Math.random()*rangeSize)
-	state = { 
-  	selectedNumbers: [],
-  	numberOfStars: Game.randomNumber(),
-    answerIsCorrect: null,
-    usedNumbers: [],
-    numberOfRedraws: 5,
-    doneStatus: ''
-  };
-  
-  selectNumber = (clickedNumber) => {
-  	if (this.state.selectedNumbers.indexOf(clickedNumber) >= 0) { return; }
-  	this.setState(prevState => ({
-    	answerIsCorrect: null,
-    	selectedNumbers: prevState.selectedNumbers.concat(clickedNumber)
-    }));
-  };
-  
-  unselectNumber = (clickedNumber) => {
-  	this.setState(prevState => ({
-    	answerIsCorrect: null,
-    	selectedNumbers: prevState.selectedNumbers.filter(
-      	number => number !== clickedNumber
-      )
-    }));
+  state = defaultState(randomNumber)
+
+  updateSelectedNumbers = (selectedNumbers) => {
+    this.setState({
+      answerIsCorrect: null,
+      selectedNumbers: selectedNumbers
+    })
   }
-  
+
   checkAnswer = () => {
-  	this.setState(prevState => ({
-    	answerIsCorrect: prevState.numberOfStars === prevState.selectedNumbers.reduce((acc, n) => acc + n, 0)
+    this.setState(prevState => ({
+      answerIsCorrect: prevState.numberOfStars === prevState.selectedNumbers.reduce((acc, n) => acc + n, 0)
     }))
-  };
-  
+  }
+
   acceptAnswer = () => {
-  	this.setState(prevState => ({
-    	usedNumbers: prevState.usedNumbers.concat(prevState.selectedNumbers),
+    this.setState(prevState => ({
+      usedNumbers: prevState.usedNumbers.concat(prevState.selectedNumbers),
       selectedNumbers: [],
-    	answerIsCorrect: null,
-      numberOfStars: Game.randomNumber(),
-    }), this.isGameOver);
+      answerIsCorrect: null,
+      numberOfStars: randomNumber(),
+    }), this.isGameOver)
   }
-  
-  tryAgain = () => {
-  	this.setState(prevState => ({
-      selectedNumbers: [],
-    	answerIsCorrect: null,
-    }));
-  }
-  
+
   redraw = () => {
-  	this.setState(prevState => ({
-      numberOfStars: Game.randomNumber(),
+    this.setState(prevState => ({
+      numberOfStars: randomNumber(),
       numberOfRedraws: (prevState.numberOfRedraws - 1),
-    }), this.isGameOver);
+    }), this.isGameOver)
   }
-  
+
   isGameOver = () => {
     this.setState(prevState => {
-  		if (prevState.usedNumbers.length === rangeSize) {
-      	return { doneStatus: 'You win!' };
+      if (prevState.usedNumbers.length === numberOfNumbers) {
+        return { doneStatus: 'You win!' };
       }
-      let remainingNumbers = range.filter(x => !prevState.usedNumbers.includes(x));
+      let remainingNumbers = Array(numberOfNumbers).fill().filter(x => !prevState.usedNumbers.includes(x));
       let possibleTotals = this.sumTotals(0, remainingNumbers, []);
       let cannotWin = this.includes(possibleTotals, prevState.numberOfStars)
       if (prevState.numberOfRedraws === 0 && cannotWin) {
-      	return { doneStatus: 'Game Over!' };
+        return { doneStatus: 'Game Over!' }
       }
     })
   }
-  
+
   sumTotals = (i, arr, final) => {
-  	if (arr.length === 0) return 0;
-  	for (var j=0; j<arr.length; j++) {
-    	final.push(i + arr[j]);
-      this.sumTotals(arr[j], arr.slice(j+1), final);
+    if (arr.length === 0) return 0
+    for (var j = 0; j < arr.length; j++) {
+      final.push(i + arr[j])
+      this.sumTotals(arr[j], arr.slice(j + 1), final)
     }
     return final
   }
 
   includes = (arr, value) => {
-    for (let i=0; i<arr.length;i++) {
-      if (arr[i]===value) return true;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] === value) return true
     }
-    return false;
+    return false
   }
-  
+
   resetGame = () => {
-  	this.setState(prevState => ({
-      selectedNumbers: [],
-      numberOfStars: Game.randomNumber(),
-      answerIsCorrect: null,
-      usedNumbers: [],
-      numberOfRedraws: 5,
-      doneStatus: ''
-    }))
+    this.setState(defaultState(Game.randomNumber))
   }
-  
-	render() {
-  const { 
-    selectedNumbers, 
-    numberOfStars, 
-    answerIsCorrect,
-    usedNumbers,
-    numberOfRedraws,
-    doneStatus
-  } = this.state;
-  	return (
-    	<div class="container">
-      	<h3>Play Nine</h3>
+
+  render() {
+    const {
+      selectedNumbers,
+      numberOfStars,
+      answerIsCorrect,
+      usedNumbers,
+      numberOfRedraws,
+      doneStatus
+    } = this.state
+    return (
+      <div className="container">
+        <h3>Play Nine</h3>
         <hr />
         <div className="row">
-          <Stars numberOfStars={numberOfStars}/>
+          <Stars numberOfStars={numberOfStars} />
           <Button selectedNumbers={selectedNumbers}
-          				checkAnswer={this.checkAnswer}
-                  answerIsCorrect={answerIsCorrect}
-                  acceptAnswer={this.acceptAnswer}
-                  tryAgain={this.tryAgain}
-                  numberOfRedraws={numberOfRedraws}
-                  redraw={this.redraw} />
+            updateSelectedNumbers={this.updateSelectedNumbers}
+            checkAnswer={this.checkAnswer}
+            answerIsCorrect={answerIsCorrect}
+            acceptAnswer={this.acceptAnswer}
+            numberOfRedraws={numberOfRedraws}
+            redraw={this.redraw} />
           <Answer selectedNumbers={selectedNumbers}
-          				unselectNumber={this.unselectNumber} />
+            updateSelectedNumbers={this.updateSelectedNumbers}
+          />
         </div>
         <br />
-        {doneStatus ? 
-        	<DoneFrame doneStatus={doneStatus}
-          						resetGame={this.resetGame}/> :
+        {doneStatus ?
+          <div className="text-center">
+            <h2>{doneStatus}</h2>
+            <button className="btn btn-secondary" onClick={this.resetGame}>Play Again</button>
+          </div> :
           <Numbers selectedNumbers={selectedNumbers}
-                  selectNumber={this.selectNumber}
-                  usedNumbers={usedNumbers} /> }
+            updateSelectedNumbers={this.updateSelectedNumbers}
+            usedNumbers={usedNumbers} />}
       </div>
-    );
+    )
   }
 }
 
-export default Game;
+export default Game
