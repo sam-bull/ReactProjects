@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import './index.css'
 import ResetButton from './ResetButton'
 import Row from './Row'
@@ -65,7 +65,7 @@ class Board extends Component {
   }
 
   render() {
-    const { tiles, status, boardSize } = this.state;
+    const { tiles, status, boardSize } = this.state
     return (
       <div>
         <div>{status}</div>

@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import './index.css'
 
 class SelectBoard extends Component {
   render() {
-    const { selectBoard } = this.props;
+    const { selectBoard } = this.props
     return (
       <div>
         <button onClick={() => selectBoard(3)}>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import './index.css'
 import Board from './Board'
 import SelectBoard from './SelectBoard'
@@ -18,7 +18,7 @@ class Game extends Component {
   }
   
   render() {
-    const { boardSelected } = this.state;
+    const { boardSelected } = this.state
     return (
       <div className="container">
         <h3>Tic Tac Toe</h3>
