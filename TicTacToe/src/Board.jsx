@@ -52,7 +52,7 @@ class Board extends Component {
     if (!tiles[id] && !winner) {
       const newTiles = tiles.slice()
       newTiles[id] = xIsNext ? 'X' : 'O'
-      
+
       const winner = this.calculateWinner(boardSize, newTiles)
       const status = this.getStatus(newTiles, !xIsNext, winner)
       this.setState(oldState => ({
@@ -79,7 +79,9 @@ class Board extends Component {
             <Row id={4} tiles={tiles} size={boardSize} />}
         </div>
         <div>
-          <ResetButton reset={this.reset} />
+          <button onClick={this.reset}>
+            Reset
+          </button>
         </div>
       </div>
     )
