@@ -11,6 +11,7 @@ const defaultState = (size) => ({
   status: 'Next player: X',
   winner: undefined,
 })
+
 class Board extends Component {
   constructor(props) {
     super(props)
